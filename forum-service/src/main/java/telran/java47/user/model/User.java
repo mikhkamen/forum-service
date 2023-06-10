@@ -10,11 +10,11 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import telran.java47.post.model.Post;
 
 @Data
-@NoArgsConstructor
 @Document(collection = "users")
-@EqualsAndHashCode(of = {"login", "password"})
+@EqualsAndHashCode(of = "login")
 public class User {
 	String id;
 	String login;
@@ -23,17 +23,28 @@ public class User {
 	String firstName;
 	@Setter
 	String lastName;
-	Set<Roles> roles = new HashSet<>();
+	Set<Roles> roles;
 
 	ModelMapper modelMapper;
+	
+	public User() {
+		this.roles = new HashSet<>();
+	}
 
 	public User(String login, String password, String firstName, String lastName) {
-		super();
+		this();
 		this.login = login;
 		this.password = password;
 		this.firstName = firstName;
 		this.lastName = lastName;
 		roles.add(Roles.USER); 
+	}
+	
+	public boolean addRole(Roles role) {
+		return roles.add(role);
+	}
+	 public boolean deleteRole(Roles role) {		 
+		return roles.remove(role);		
 	}
 
 }

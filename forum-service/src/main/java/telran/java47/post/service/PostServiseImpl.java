@@ -1,6 +1,6 @@
 package telran.java47.post.service;
 
-import java.time.LocalDateTime;
+
 import java.util.List;
 
 import org.springframework.stereotype.Service;
@@ -33,8 +33,7 @@ public class PostServiseImpl implements PostService {
 		if (author == null || postCreateDto.getContent() == null || postCreateDto.getTitle() == null
 				|| postCreateDto.getTags() == null)
 			return null;
-		Post post = new Post(postCreateDto.getTitle(), postCreateDto.getContent(), postCreateDto.getTags(), author,
-				LocalDateTime.now());
+		Post post = modelMapper.map(postCreateDto, Post.class);
 		postRepository.save(post);
 		return modelMapper.map(post, PostDto.class);
 	}
@@ -64,7 +63,7 @@ public class PostServiseImpl implements PostService {
 	@Override
 	public PostDto addComment(String id, String user, CommentCreateDto commentCreateDto) {
 		Post post = postRepository.findById(id).orElseThrow(() -> new PostNotFoundException());
-		if(post.addComment(user, commentCreateDto)) {
+		if(post.addComment(user, commentCreateDto.getMessage())) {
 			postRepository.save(post);			
 		};
 		return modelMapper.map(post, PostDto.class);		
@@ -85,8 +84,7 @@ public class PostServiseImpl implements PostService {
 	}
 
 	@Override
-	public List<PostDto> findPostsByPeriod(PeriodDto periodDto) {
-		
+	public List<PostDto> findPostsByPeriod(PeriodDto periodDto) {		
 		return postRepository.findByDateBetween(periodDto.getDateFrom(), periodDto.getDateTo()).stream()
 				.map(post -> modelMapper.map( post, PostDto.class))
 				.toList();
@@ -95,12 +93,7 @@ public class PostServiseImpl implements PostService {
 	@Override
 	public PostDto updatePost(String id, PostUpdateDto postUpdateDto) {
 		Post post = postRepository.findById(id).orElseThrow(() -> new PostNotFoundException());
-		if (postUpdateDto.getTitle() != null)
-			post.setTitle(postUpdateDto.getTitle());
-		if (postUpdateDto.getTags() != null)
-			post.setTags(postUpdateDto.getTags());
-		if (postUpdateDto.getContent() != null)
-			post.setContent(postUpdateDto.getContent());
+		post.updatePost(postUpdateDto.getTitle(), postUpdateDto.getTags(), postUpdateDto.getContent());
 		postRepository.save(post);
 
 		return modelMapper.map(post, PostDto.class);

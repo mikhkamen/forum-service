@@ -64,16 +64,17 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public UserDto addRole(String login, Roles role) {
 		User user = userRepository.findByLogin(login);
-		user.getRoles().add(role);
-		userRepository.save(user);
+		if (user.addRole(role)) {
+			userRepository.save(user);
+		}
 		return modelMapper.map(user, UserDto.class);
 	}
 
 	@Override
 	public UserDto deleteRole(String login, Roles role) {
 		User user = userRepository.findByLogin(login);
-		user.getRoles().remove(role);
-		userRepository.save(user);
+		if (user.deleteRole(role))
+			userRepository.save(user);
 		return modelMapper.map(user, UserDto.class);
 	}
 
@@ -82,6 +83,13 @@ public class UserServiceImpl implements UserService {
 		User user = userRepository.findByLogin(userLoginDto.getLogin());
 		user.setPassword(userLoginDto.getPassword());
 		userRepository.save(user);
+	}
+
+	private User findUserIfExists(String login) {
+		if (userRepository.existsByLogin(login))
+			return userRepository.findByLogin(login);
+		else 
+			return null;
 	}
 
 }

@@ -37,7 +37,7 @@ public class Post {
 		this.comments = new ArrayList<Comment>();
 	}
 
-	public Post(String title, String content, List<String> tags, String author, LocalDateTime dateCreated) {
+	public Post(String title, String content, List<String> tags, String author) {
 		this();
 		this.title = title;
 		this.content = content;
@@ -45,10 +45,10 @@ public class Post {
 		this.author = author;		
 	}
 
-	public boolean addComment(String user, CommentCreateDto commentCreateDto) {
-		if (commentCreateDto.getMessage() == null || user == null)
+	public boolean addComment(String user, String message) {
+		if (message == null || user == null)
 			return false;
-		Comment comment = new Comment(commentCreateDto.getMessage(), user);
+		Comment comment = new Comment(message, user);
 		return comments.add(comment);
 	}
 
@@ -62,6 +62,17 @@ public class Post {
 	
 	public boolean removeTag(String tag) {
 		return tags.remove(tag);
+	}
+	
+	public Post updatePost(String title, List<String> tags, String content) {
+		if (title != null)
+			this.setTitle(title);
+		if (tags != null)
+			this.setTags(tags);
+		if (content != null)
+			this.setContent(content);
+		return this;
+		
 	}
 	
 }
