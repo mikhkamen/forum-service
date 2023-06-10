@@ -1,6 +1,5 @@
 package telran.java47.post.service;
 
-
 import java.util.List;
 
 import org.springframework.stereotype.Service;

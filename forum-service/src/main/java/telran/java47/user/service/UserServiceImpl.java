@@ -28,8 +28,7 @@ public class UserServiceImpl implements UserService {
 		if (userRepository.existsByLogin(userRegisterDto.getLogin())) {
 			throw new RuntimeException("User with this login already exists");
 		}
-		User user = new User(userRegisterDto.getLogin(), userRegisterDto.getPassword(), userRegisterDto.getFirstName(),
-				userRegisterDto.getLastName());
+		User user = modelMapper.map(userRegisterDto, User.class);
 		userRepository.save(user);
 		return modelMapper.map(user, UserDto.class);
 	}
@@ -52,12 +51,8 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public UserDto userUpdate(String login, UserUpdateDto userUpdateDto) {
-		User user = userRepository.findByLogin(login);
-		if (userUpdateDto.getFirstName() != null)
-			user.setFirstName(userUpdateDto.getFirstName());
-		if (userUpdateDto.getLastName() != null)
-			user.setLastName(userUpdateDto.getLastName());
-		userRepository.save(user);
+		User user = userRepository.findByLogin(login);		
+		userRepository.save(user.userUpdate(userUpdateDto.getFirstName(), userUpdateDto.getLastName()));
 		return modelMapper.map(user, UserDto.class);
 	}
 
@@ -83,13 +78,6 @@ public class UserServiceImpl implements UserService {
 		User user = userRepository.findByLogin(userLoginDto.getLogin());
 		user.setPassword(userLoginDto.getPassword());
 		userRepository.save(user);
-	}
-
-	private User findUserIfExists(String login) {
-		if (userRepository.existsByLogin(login))
-			return userRepository.findByLogin(login);
-		else 
-			return null;
 	}
 
 }

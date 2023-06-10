@@ -8,9 +8,9 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+
 import lombok.Setter;
-import telran.java47.post.model.Post;
+
 
 @Data
 @Document(collection = "users")
@@ -26,9 +26,9 @@ public class User {
 	Set<Roles> roles;
 
 	ModelMapper modelMapper;
-	
+
 	public User() {
-		this.roles = new HashSet<>();
+		this.roles = new HashSet<>();		
 	}
 
 	public User(String login, String password, String firstName, String lastName) {
@@ -37,14 +37,23 @@ public class User {
 		this.password = password;
 		this.firstName = firstName;
 		this.lastName = lastName;
-		roles.add(Roles.USER); 
+		roles.add(Roles.USER);
 	}
-	
+
 	public boolean addRole(Roles role) {
 		return roles.add(role);
 	}
-	 public boolean deleteRole(Roles role) {		 
-		return roles.remove(role);		
+
+	public boolean deleteRole(Roles role) {
+		return roles.remove(role);
+	}
+
+	public User userUpdate(String firstName, String lastName) {
+		if (firstName != null)
+			this.setFirstName(firstName);
+		if (lastName != null)
+			this.setLastName(lastName);
+		return this;
 	}
 
 }
