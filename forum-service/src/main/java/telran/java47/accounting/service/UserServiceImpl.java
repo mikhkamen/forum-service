@@ -36,14 +36,14 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public UserDto userDelete(String login) {
-		User user = userRepository.findByLogin(login);
+		User user = userRepository.findById(login).orElseThrow(UserNotFoundException::new);
 		userRepository.delete(user);
 		return modelMapper.map(user, UserDto.class);
 	}
 
 	@Override
 	public UserDto userUpdate(String login, UserUpdateDto userUpdateDto) {
-		User user = userRepository.findByLogin(login);
+		User user = userRepository.findById(login).orElseThrow(UserNotFoundException::new);
 		userRepository.save(user.userUpdate(userUpdateDto.getFirstName(), userUpdateDto.getLastName()));
 		return modelMapper.map(user, UserDto.class);
 	}
