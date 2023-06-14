@@ -1,16 +1,17 @@
-package telran.java47.user.service;
+package telran.java47.accounting.service;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
-import telran.java47.user.dao.UserRepository;
-import telran.java47.user.dto.UserDto;
-import telran.java47.user.dto.UserLoginDto;
-import telran.java47.user.dto.UserRegisterDto;
-import telran.java47.user.dto.UserUpdateDto;
-import telran.java47.user.model.Roles;
-import telran.java47.user.model.User;
+import telran.java47.accounting.dao.UserRepository;
+import telran.java47.accounting.dto.RolesDto;
+import telran.java47.accounting.dto.UserDto;
+import telran.java47.accounting.dto.UserRegisterDto;
+import telran.java47.accounting.dto.UserUpdateDto;
+import telran.java47.accounting.exception.UserNotFoundException;
+import telran.java47.accounting.model.Roles;
+import telran.java47.accounting.model.User;
 
 @Service
 @RequiredArgsConstructor
@@ -34,15 +35,6 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public UserDto userLogin(UserLoginDto userLoginDto) {
-		User user = userRepository.findByLogin(userLoginDto.getLogin());
-		if (user.getPassword().equals(userLoginDto.getPassword()))
-			return modelMapper.map(user, UserDto.class);
-		else
-			return null;
-	}
-
-	@Override
 	public UserDto userDelete(String login) {
 		User user = userRepository.findByLogin(login);
 		userRepository.delete(user);
@@ -51,33 +43,30 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public UserDto userUpdate(String login, UserUpdateDto userUpdateDto) {
-		User user = userRepository.findByLogin(login);		
+		User user = userRepository.findByLogin(login);
 		userRepository.save(user.userUpdate(userUpdateDto.getFirstName(), userUpdateDto.getLastName()));
 		return modelMapper.map(user, UserDto.class);
 	}
 
 	@Override
-	public UserDto addRole(String login, Roles role) {
-		User user = userRepository.findByLogin(login);
-		if (user.addRole(role)) {
-			userRepository.save(user);
-		}
+	public UserDto getUser(String login) {
+		User user = userRepository.findById(login).orElseThrow(UserNotFoundException::new);
 		return modelMapper.map(user, UserDto.class);
 	}
 
 	@Override
-	public UserDto deleteRole(String login, Roles role) {
-		User user = userRepository.findByLogin(login);
-		if (user.deleteRole(role))
+	public RolesDto changeRolesList(String login, Roles role, boolean isAddRole) {
+		User user = userRepository.findById(login).orElseThrow(UserNotFoundException::new);
+		boolean result = isAddRole ? user.addRole(role) : user.deleteRole(role);
+		if (result)
 			userRepository.save(user);
-		return modelMapper.map(user, UserDto.class);
+		return new RolesDto(login, user.getRoles());
 	}
 
 	@Override
-	public void changePass(UserLoginDto userLoginDto) {
-		User user = userRepository.findByLogin(userLoginDto.getLogin());
-		user.setPassword(userLoginDto.getPassword());
+	public void changePassword(String login, String newPassword) {
+		User user = userRepository.findById(login).orElseThrow(UserNotFoundException::new);
+		user.setPassword(newPassword);
 		userRepository.save(user);
 	}
-
 }

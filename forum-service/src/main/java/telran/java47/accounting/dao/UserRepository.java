@@ -1,8 +1,8 @@
-package telran.java47.user.dao;
+package telran.java47.accounting.dao;
 
 import org.springframework.data.mongodb.repository.MongoRepository;
 
-import telran.java47.user.model.User;
+import telran.java47.accounting.model.User;
 
 
 public interface UserRepository extends MongoRepository<User, String> {

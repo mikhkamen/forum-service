@@ -1,22 +1,25 @@
-package telran.java47.user.controller;
+package telran.java47.accounting.controller;
 
-import org.springframework.http.HttpStatus;
+import java.security.Principal;
+
+
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import lombok.RequiredArgsConstructor;
-import telran.java47.user.dto.UserDto;
-import telran.java47.user.dto.UserLoginDto;
-import telran.java47.user.dto.UserRegisterDto;
-import telran.java47.user.dto.UserUpdateDto;
-import telran.java47.user.model.Roles;
-import telran.java47.user.service.UserService;
+import telran.java47.accounting.dto.RolesDto;
+import telran.java47.accounting.dto.UserDto;
+import telran.java47.accounting.dto.UserRegisterDto;
+import telran.java47.accounting.dto.UserUpdateDto;
+import telran.java47.accounting.model.Roles;
+import telran.java47.accounting.service.UserService;
 
 @RestController
 @RequiredArgsConstructor
@@ -29,10 +32,15 @@ public class UserController {
 	public UserDto userRegister(@RequestBody UserRegisterDto userRegisterDto) {
 		return userService.userRegister(userRegisterDto);
 	}
-
+	
 	@PostMapping("/login")
-	public UserDto userLogin(@RequestBody UserLoginDto userLoginDto) {
-		return userService.userLogin(userLoginDto);
+	public UserDto login(Principal principal) {
+		return userService.getUser(principal.getName());
+	}
+	
+	@GetMapping("/user/{login}")
+	public UserDto getUser(@PathVariable String login) {
+		return userService.getUser(login);
 	}
 
 	@DeleteMapping("/user/{user}")
@@ -46,20 +54,19 @@ public class UserController {
 	}
 
 	@PutMapping("/user/{user}/role/{role}")
-	public UserDto addRole(@PathVariable String user, @PathVariable String role) {
+	public RolesDto addRole(@PathVariable String user, @PathVariable String role) {
 		Roles userRole = Roles.valueOf(role.toUpperCase());
-		return userService.addRole(user, userRole);
+		return userService.changeRolesList(user, userRole, true);
 	}
 
 	@DeleteMapping("/user/{user}/role/{role}")
-	public UserDto deleteRole(@PathVariable String user, @PathVariable String role) {
+	public RolesDto deleteRole(@PathVariable String user, @PathVariable String role) {
 		Roles userRole = Roles.valueOf(role.toUpperCase());
-		return userService.deleteRole(user, userRole);
+		return userService.changeRolesList(user, userRole, false);
 	}
 
 	@PutMapping("/user/password")
-	@ResponseStatus(HttpStatus.OK)
-	public void changePass(@RequestBody UserLoginDto userLoginDto) {
-		userService.changePass(userLoginDto);
+	public void changePass(Principal principal, @RequestHeader("X-Password") String newPassword) {
+		userService.changePassword(principal.getName(), newPassword);
 	}
 }

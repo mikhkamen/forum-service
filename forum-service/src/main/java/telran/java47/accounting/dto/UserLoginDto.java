@@ -1,4 +1,4 @@
-package telran.java47.user.dto;
+package telran.java47.accounting.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

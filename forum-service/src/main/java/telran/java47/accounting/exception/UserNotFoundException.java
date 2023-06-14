@@ -1,4 +1,4 @@
-package telran.java47.user.exception;
+package telran.java47.accounting.exception;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;

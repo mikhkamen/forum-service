@@ -1,4 +1,4 @@
-package telran.java47.user.model;
+package telran.java47.accounting.model;
 
 import java.util.HashSet;
 import java.util.Set;

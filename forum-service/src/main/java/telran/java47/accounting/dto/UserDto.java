@@ -1,4 +1,4 @@
-package telran.java47.user.dto;
+package telran.java47.accounting.dto;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -6,7 +6,7 @@ import java.util.Set;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import telran.java47.user.model.Roles;
+import telran.java47.accounting.model.Roles;
 
 @Getter
 @AllArgsConstructor

@@ -1,4 +1,4 @@
-package telran.java47.user.model;
+package telran.java47.accounting.model;
 
 public enum Roles {
 USER,

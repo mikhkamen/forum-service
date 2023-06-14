@@ -1,24 +1,23 @@
-package telran.java47.user.service;
+package telran.java47.accounting.service;
 
-import telran.java47.user.dto.UserDto;
-import telran.java47.user.dto.UserLoginDto;
-import telran.java47.user.dto.UserRegisterDto;
-import telran.java47.user.dto.UserUpdateDto;
-import telran.java47.user.model.Roles;
+import telran.java47.accounting.dto.RolesDto;
+import telran.java47.accounting.dto.UserDto;
+import telran.java47.accounting.dto.UserRegisterDto;
+import telran.java47.accounting.dto.UserUpdateDto;
+import telran.java47.accounting.model.Roles;
 
 public interface UserService {
 
 	UserDto userRegister(UserRegisterDto userRegisterDto);
-
-	UserDto userLogin(UserLoginDto userLoginDto);
+	
+	UserDto getUser(String user);
 
 	UserDto userDelete(String user);
 
 	UserDto userUpdate(String user, UserUpdateDto userUpdateDto);
 
-	UserDto addRole(String user, Roles role);
+	RolesDto changeRolesList(String user, Roles role, boolean isAddRole);
 
-	UserDto deleteRole(String user, Roles role);
-
-	void changePass(UserLoginDto userLoginDto);
+	void changePassword(String login, String newPassword);
+	
 }
