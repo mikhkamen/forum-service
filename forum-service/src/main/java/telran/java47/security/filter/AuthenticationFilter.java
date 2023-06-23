@@ -3,7 +3,7 @@ package telran.java47.security.filter;
 import java.io.IOException;
 import java.security.Principal;
 import java.util.Base64;
-import java.util.Set;
+import java.util.EnumSet;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -21,8 +21,10 @@ import org.springframework.stereotype.Component;
 import lombok.RequiredArgsConstructor;
 import telran.java47.accounting.dao.UserAccountRepository;
 import telran.java47.accounting.model.UserAccount;
+import telran.java47.enums.Roles;
 import telran.java47.security.context.SecurityContext;
 import telran.java47.security.model.User;
+import telran.java47.enums.Methods;;
 
 @Component
 @RequiredArgsConstructor
@@ -37,7 +39,7 @@ public class AuthenticationFilter implements Filter {
 			throws IOException, ServletException {
 		HttpServletRequest request = (HttpServletRequest) req;
 		HttpServletResponse response = (HttpServletResponse) resp;
-		if (checkEndPoint(request.getMethod(), request.getServletPath())) {
+		if (checkEndPoint(Methods.valueOf(request.getMethod()), request.getServletPath())) {
 			String sessionId = request.getSession().getId();
 			User user = securityContext.getUserBySessionId(sessionId);
 			if(user == null) {
@@ -62,9 +64,9 @@ public class AuthenticationFilter implements Filter {
 		chain.doFilter(request, response);
 	}
 
-	private boolean checkEndPoint(String method, String path) {
+	private boolean checkEndPoint(Methods method, String path) {
 		return !(
-				("POST".equalsIgnoreCase(method) && path.matches("/account/register/?"))
+				(Methods.POST.equals(method) && path.matches("/account/register/?"))
 				|| path.matches("/forum/posts/\\w+(/\\w+)?/?")
 				);
 	}
@@ -77,9 +79,9 @@ public class AuthenticationFilter implements Filter {
 
 	private static class WrappedRequest extends HttpServletRequestWrapper {
 		String login;
-		Set<String> roles;
+		EnumSet<Roles> roles;
 
-		public WrappedRequest(HttpServletRequest request, String login, Set<String> roles) {
+		public WrappedRequest(HttpServletRequest request, String login, EnumSet<Roles> roles) {
 			super(request);
 			this.login = login;
 			this.roles = roles;

@@ -1,16 +1,17 @@
 package telran.java47.security.model;
 
 import java.security.Principal;
-import java.util.Set;
+import java.util.EnumSet;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import telran.java47.enums.Roles;
 
 @AllArgsConstructor
 public class User implements Principal {
 	String userName;
 	@Getter
-	Set<String> roles;
+	EnumSet<Roles> roles;
 
 	@Override
 	public String getName() {

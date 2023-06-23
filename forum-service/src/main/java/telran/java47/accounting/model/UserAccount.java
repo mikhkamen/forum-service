@@ -1,14 +1,13 @@
 package telran.java47.accounting.model;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.EnumSet;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
+import telran.java47.enums.Roles;
 
 @Getter
 @Document(collection = "users")
@@ -17,14 +16,14 @@ public class UserAccount {
 	String login;
 	@Setter
 	String password;
-	@Setter
+	@Setter 
 	String firstName;
 	@Setter
 	String lastName;
-	Set<String> roles;
+	EnumSet<Roles> roles;
 	
 	public UserAccount() {
-		roles = new HashSet<>();
+		this.roles = EnumSet.of(Roles.USER);
 	}
 
 	public UserAccount(String login, String password, String firstName, String lastName) {
@@ -35,11 +34,11 @@ public class UserAccount {
 		this.lastName = lastName;
 	}
 
-	public boolean addRole(String role) {
+	public boolean addRole(Roles role) {
 		return roles.add(role);
 	}
 
-	public boolean removeRole(String role) {
+	public boolean removeRole(Roles role) {
 		return roles.remove(role);
 	}
 

@@ -13,6 +13,7 @@ import telran.java47.accounting.dto.UserRegisterDto;
 import telran.java47.accounting.dto.exceptions.UserExistsException;
 import telran.java47.accounting.dto.exceptions.UserNotFoundException;
 import telran.java47.accounting.model.UserAccount;
+import telran.java47.enums.Roles;
 
 @Service
 @RequiredArgsConstructor
@@ -29,7 +30,7 @@ public class UserAccountServiceImpl implements UserAccountService {
 		UserAccount userAccount = modelMapper.map(userRegisterDto, UserAccount.class);
 		String password = BCrypt.hashpw(userRegisterDto.getPassword(), BCrypt.gensalt());
 		userAccount.setPassword(password);
-		userAccount.addRole("USER");
+		userAccount.addRole(Roles.USER);
 		userAccountRepository.save(userAccount);
 		return modelMapper.map(userAccount, UserDto.class);
 	}
@@ -61,13 +62,13 @@ public class UserAccountServiceImpl implements UserAccountService {
 	}
 
 	@Override
-	public RolesDto changeRolesList(String login, String role, boolean isAddRole) {
+	public RolesDto changeRolesList(String login, Roles role, boolean isAddRole) {
 		UserAccount userAccount = userAccountRepository.findById(login).orElseThrow(() -> new UserNotFoundException());
 		boolean res;
 		if (isAddRole) {
-			res = userAccount.addRole(role.toUpperCase());
+			res = userAccount.addRole(role);
 		} else {
-			res = userAccount.removeRole(role.toUpperCase());
+			res = userAccount.removeRole(role);
 		}
 		if (res) {
 			userAccountRepository.save(userAccount);

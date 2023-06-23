@@ -14,6 +14,8 @@ import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import lombok.RequiredArgsConstructor;
+import telran.java47.enums.Methods;
+import telran.java47.enums.Roles;
 import telran.java47.post.dao.PostRepository;
 import telran.java47.post.model.Post;
 import telran.java47.security.model.User;
@@ -31,13 +33,13 @@ public class DeletePostFilter implements Filter {
 		HttpServletRequest request = (HttpServletRequest) req;
 		HttpServletResponse response = (HttpServletResponse) resp;
 		String path = request.getServletPath();
-		if (checkEndPoint(request.getMethod(), path)) {
+		if (checkEndPoint(Methods.valueOf(request.getMethod()), path)) {
 			User user = (User) request.getUserPrincipal();
 			String[] arr = path.split("/");
 			String postId = arr[arr.length - 1];
 			Post post = postRepository.findById(postId).orElse(null);
 			if(post == null || !(user.getName().equals(post.getAuthor())
-					|| user.getRoles().contains("MODERATOR"))) {
+					|| user.getRoles().contains(Roles.MODERATOR))) {
 				response.sendError(403);
 				return;
 			}
@@ -45,8 +47,8 @@ public class DeletePostFilter implements Filter {
 		chain.doFilter(request, response);
 	}
 
-	private boolean checkEndPoint(String method, String path) {
-		return "DELETE".equalsIgnoreCase(method) && path.matches("/forum/post/\\w+/?");
+	private boolean checkEndPoint(Methods method, String path) {
+		return Methods.DELETE.equals(method) && path.matches("/forum/post/\\w+/?");
 	}
 }
 

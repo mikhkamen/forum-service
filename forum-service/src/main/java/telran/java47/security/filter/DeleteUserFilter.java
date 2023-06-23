@@ -13,6 +13,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
+import telran.java47.enums.Methods;
+import telran.java47.enums.Roles;
 import telran.java47.security.model.User;
 
 @Component
@@ -25,12 +27,12 @@ public class DeleteUserFilter implements Filter {
 		HttpServletRequest request = (HttpServletRequest) req;
 		HttpServletResponse response = (HttpServletResponse) resp;
 		String path = request.getServletPath();
-		if (checkEndPoint(request.getMethod(), path)) {
+		if (checkEndPoint(Methods.valueOf(request.getMethod()), path)) {
 			User user = (User) request.getUserPrincipal();
 			String[] arr = path.split("/");
 			String userName = arr[arr.length - 1];
 			if (!(user.getName().equalsIgnoreCase(userName)
-					|| user.getRoles().contains("Administrator".toUpperCase()))) {
+					|| user.getRoles().contains(Roles.ADMINISTRATOR))) {
 				response.sendError(403);
 				return;
 			}
@@ -39,8 +41,8 @@ public class DeleteUserFilter implements Filter {
 
 	}
 
-	private boolean checkEndPoint(String method, String path) {
-		return "DELETE".equalsIgnoreCase(method) && path.matches("/account/user/\\w+/?");
+	private boolean checkEndPoint(Methods method, String path) {
+		return (Methods.DELETE.equals(method) || Methods.POST.equals(method)) && path.matches("/account/user/\\w+/?");
 	}
 
 }

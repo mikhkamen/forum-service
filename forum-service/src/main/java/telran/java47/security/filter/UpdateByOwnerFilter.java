@@ -14,6 +14,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
+import telran.java47.enums.Methods;
+
 @Component
 @Order(30)
 public class UpdateByOwnerFilter implements Filter {
@@ -24,7 +26,7 @@ public class UpdateByOwnerFilter implements Filter {
 		HttpServletRequest request = (HttpServletRequest) req;
 		HttpServletResponse response = (HttpServletResponse) resp;
 		String path = request.getServletPath();
-		if (checkEndPoint(request.getMethod(), path)) {
+		if (checkEndPoint(Methods.valueOf(request.getMethod()), path)) {
 			Principal principal = request.getUserPrincipal();
 			String[] arr = path.split("/");
 			String user = arr[arr.length - 1];
@@ -37,9 +39,9 @@ public class UpdateByOwnerFilter implements Filter {
 
 	}
 
-	private boolean checkEndPoint(String method, String path) {
-		return "PUT".equalsIgnoreCase(method) && path.matches("/account/user/\\w+/?")
-				|| "POST".equalsIgnoreCase(method) && path.matches("/forum/post/\\w+/?")
-				|| "PUT".equalsIgnoreCase(method) && path.matches("/forum/post/\\w+/comment/\\w+/?");
+	private boolean checkEndPoint(Methods method, String path) {
+		return Methods.PUT.equals(method) && path.matches("/account/user/\\w+/?")
+				|| Methods.POST.equals(method) && path.matches("/forum/post/\\w+/?")
+				|| Methods.PUT.equals(method) && path.matches("/forum/post/\\w+/comment/\\w+/?");
 	}
 }

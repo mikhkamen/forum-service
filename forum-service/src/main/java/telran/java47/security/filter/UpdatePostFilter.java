@@ -15,6 +15,7 @@ import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import lombok.RequiredArgsConstructor;
+import telran.java47.enums.Methods;
 import telran.java47.post.dao.PostRepository;
 import telran.java47.post.model.Post;
 
@@ -31,7 +32,7 @@ public class UpdatePostFilter implements Filter {
 		HttpServletRequest request = (HttpServletRequest) req;
 		HttpServletResponse response = (HttpServletResponse) resp;
 		String path = request.getServletPath();
-		if (checkEndPoint(request.getMethod(), path)) {
+		if (checkEndPoint(Methods.valueOf(request.getMethod()), path)) {
 			Principal principal = request.getUserPrincipal();
 			String[] arr = path.split("/");
 			String postId = arr[arr.length - 1];
@@ -45,8 +46,8 @@ public class UpdatePostFilter implements Filter {
 
 	}
 
-	private boolean checkEndPoint(String method, String path) {
-		return "PUT".equalsIgnoreCase(method) && path.matches("/forum/post/\\w+/?");
+	private boolean checkEndPoint(Methods method, String path) {
+		return Methods.PUT.equals(method) && path.matches("/forum/post/\\w+/?");
 	}
 
 
