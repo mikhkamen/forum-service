@@ -27,7 +27,7 @@ import telran.java47.security.model.User;
 @Component
 @RequiredArgsConstructor
 @Order(10)
-public class AuthenticationFilter implements Filter {
+public class AdminManagingRolesFilter implements Filter {
 
 	final UserAccountRepository userAccountRepository;
 	final SecurityContext securityContext;
@@ -91,3 +91,4 @@ public class AuthenticationFilter implements Filter {
 		}
 	}
 }
+
