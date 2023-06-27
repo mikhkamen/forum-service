@@ -9,33 +9,37 @@ import org.springframework.security.web.SecurityFilterChain;
 
 import static org.springframework.security.config.Customizer.withDefaults;
 
+import javax.servlet.http.HttpServletResponse;
+
 @Configuration
 public class AuthorizationConfiguration {
 
 	@Bean
-	public SecurityFilterChain configure(HttpSecurity http) throws Exception {
+	public SecurityFilterChain configure(HttpSecurity http,HttpServletResponse response) throws Exception {
         http.httpBasic(withDefaults());
         http.csrf().disable();
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
         http.authorizeRequests(authorize -> authorize
         		.mvcMatchers("/account/register", "/forum/posts/**")
         			.permitAll()
+    			.mvcMatchers("/account/password")
+    				.access("authenticated")
         		.mvcMatchers("/account/user/{login}/role/{role}")
-        			.hasRole("ADMINISTRATOR")
+        			.access("hasRole('ADMINISTRATOR') and @customSecurity.checkPasswordExpiration(authentication.name)")
         		.mvcMatchers(HttpMethod.PUT, "/account/user/{login}")
-        			.access("#login == authentication.name")
+        			.access("#login == authentication.name and @customSecurity.checkPasswordExpiration(authentication.name)")
         		.mvcMatchers(HttpMethod.DELETE, "/account/user/{login}")
-        			.access("#login == authentication.name or hasRole('ADMINISTRATOR')")
+        			.access("(#login == authentication.name or hasRole('ADMINISTRATOR')) and @customSecurity.checkPasswordExpiration(authentication.name)")
         		.mvcMatchers(HttpMethod.POST, "/forum/post/{author}")
-        			.access("#author == authentication.name")
+        			.access("#author == authentication.name and @customSecurity.checkPasswordExpiration(authentication.name)")
         		.mvcMatchers(HttpMethod.PUT, "/forum/post/{id}/comment/{author}")
-        			.access("#author == authentication.name")
+        			.access("#author == authentication.name and @customSecurity.checkPasswordExpiration(authentication.name)")
         		.mvcMatchers(HttpMethod.PUT, "/forum/post/{id}")
-        			.access("@customSecurity.checkPostAuthor(#id, authentication.name)")
+        			.access("@customSecurity.checkPostAuthor(#id, authentication.name) and @customSecurity.checkPasswordExpiration(authentication.name) ")
         		.mvcMatchers(HttpMethod.DELETE, "/forum/post/{id}")
-        			.access("@customSecurity.checkPostAuthor(#id, authentication.name) or hasRole('MODERATOR')")
+        			.access("(@customSecurity.checkPostAuthor(#id, authentication.name) or hasRole('MODERATOR')) and @customSecurity.checkPasswordExpiration(authentication.name)")
         		.anyRequest()
-        			.authenticated()
+        			.access("authenticated and @customSecurity.checkPasswordExpiration(authentication.name)")
         );
 		
 		return http.build();

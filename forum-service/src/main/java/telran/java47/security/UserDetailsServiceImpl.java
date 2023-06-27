@@ -27,5 +27,4 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 									.toArray(String[]::new);
 		return new User(username, userAccount.getPassword(), AuthorityUtils.createAuthorityList(roles));
 	}
-
 }

@@ -1,5 +1,6 @@
 package telran.java47.accounting.model;
 
+import java.time.LocalDate;
 import java.util.EnumSet;
 
 import org.springframework.data.annotation.Id;
@@ -16,6 +17,7 @@ public class UserAccount {
 	String login;
 	@Setter
 	String password;
+	public LocalDate expirationDate;
 	@Setter 
 	String firstName;
 	@Setter
@@ -24,9 +26,10 @@ public class UserAccount {
 	
 	public UserAccount() {
 		this.roles = EnumSet.of(Roles.USER);
+		this.expirationDate = LocalDate.now().plusDays(60);
 	}
 
-	public UserAccount(String login, String password, String firstName, String lastName) {
+	public UserAccount(String login, String password,  String firstName, String lastName) {
 		this();
 		this.login = login;
 		this.password = password;
@@ -41,5 +44,17 @@ public class UserAccount {
 	public boolean removeRole(Roles role) {
 		return roles.remove(role);
 	}
-
+	
+	public boolean changePassword(String newPassword) {
+		if (!newPassword.equals(this.password)) {
+			this.password = newPassword;
+			this.expirationDate = LocalDate.now().plusDays(60);
+			return true;
+		}
+		return false;
+	}
+	
+	public boolean isPasswordExpire() {
+		return LocalDate.now().isBefore(expirationDate);
+	}
 }

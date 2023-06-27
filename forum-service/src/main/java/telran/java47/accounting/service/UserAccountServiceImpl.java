@@ -1,7 +1,7 @@
 package telran.java47.accounting.service;
 
-import org.mindrot.jbcrypt.BCrypt;
 import org.modelmapper.ModelMapper;
+import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
@@ -49,6 +49,7 @@ public class UserAccountServiceImpl implements UserAccountService {
 	}
 
 	@Override
+
 	public UserDto updateUser(String login, UserEditDto userEditDto) {
 		UserAccount userAccount = userAccountRepository.findById(login).orElseThrow(() -> new UserNotFoundException());
 		if (userEditDto.getFirstName() != null) {
@@ -80,9 +81,9 @@ public class UserAccountServiceImpl implements UserAccountService {
 	public void changePassword(String login, String newPassword) {
 		UserAccount userAccount = userAccountRepository.findById(login).orElseThrow(() -> new UserNotFoundException());
 		String password = BCrypt.hashpw(newPassword, BCrypt.gensalt());
-		userAccount.setPassword(password);
-		userAccountRepository.save(userAccount);
-
+		if (userAccount.changePassword(password)) {
+			userAccountRepository.save(userAccount);
+		}	
 	}
 
 }
